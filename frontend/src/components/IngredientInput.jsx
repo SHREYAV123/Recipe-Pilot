@@ -1,5 +1,8 @@
 import { useState } from "react";
 import RecipeCard from "./RecipeCard";
+import Loading from "./Loading";
+import Error from "./Error";
+import EmptyState from "./EmptyState";
 
 import {
   Sparkles,
@@ -233,6 +236,12 @@ export default function IngredientInput() {
             {error}
           </p>
         )}
+
+{loading && <Loading />}
+
+{error && <Error message={error} />}
+
+{!loading && !recipe && !error && <EmptyState />}
 
         {recipe && (
   <div className="mt-8 rounded-3xl border border-[#E8E2D7] bg-[#FCF8F2] p-6 shadow-sm">

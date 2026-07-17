@@ -109,7 +109,7 @@ export default function Footer() {
           </a>
 
           <a
-            href="mailto:your@email.com"
+            href="mailto:shreyasahu9696@email.com"
             className="
             px-5
             py-2.5
