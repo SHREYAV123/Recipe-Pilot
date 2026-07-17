@@ -17,22 +17,35 @@ export default function IngredientInput() {
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState("");
 
-  const handleGenerate = async () => {
-    const trimmedIngredients = ingredients.trim();
-    if (!trimmedIngredients) return;
+ const handleGenerate = async () => {
+  const trimmedIngredients = ingredients.trim();
 
-    setLoading(true);
-    setError("");
+  if (!trimmedIngredients) {
+    setRecipe(null);
+    setError("⚠️ Please enter at least one ingredient before generating a recipe.");
+    return;
+  }
 
-    try {
-      const data = await generateRecipe({ ingredients: trimmedIngredients });
-      setRecipe(data);
-    } catch (err) {
-      setError(err?.response?.data?.message || "Unable to generate a recipe right now.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  setError("");
+
+  try {
+    const data = await generateRecipe({
+      ingredients: trimmedIngredients,
+    });
+
+    setRecipe(data);
+  } catch (err) {
+    setRecipe(null);
+
+    setError(
+      err?.response?.data?.message ||
+      "Unable to generate a recipe right now."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const clearInput = () => {
     setIngredients("");
@@ -97,7 +110,13 @@ export default function IngredientInput() {
         <textarea
           rows={8}
           value={ingredients}
-          onChange={(e) => setIngredients(e.target.value)}
+        onChange={(e) => {
+  setIngredients(e.target.value);
+
+  if (error) {
+    setError("");
+  }
+}}
           placeholder={`Example:
 
 🥚 Eggs
@@ -231,11 +250,6 @@ export default function IngredientInput() {
 
         </div>
 
-        {error && (
-          <p className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </p>
-        )}
 
 {loading && <Loading />}
 
@@ -243,152 +257,7 @@ export default function IngredientInput() {
 
 {!loading && !recipe && !error && <EmptyState />}
 
-        {recipe && (
-  <div className="mt-8 rounded-3xl border border-[#E8E2D7] bg-[#FCF8F2] p-6 shadow-sm">
-
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div>
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[#2E7D32]">
-          Your Recipe
-        </p>
-
-        <h3 className="mt-2 text-2xl font-bold text-[#143D2A]">
-          {recipe.title}
-        </h3>
-      </div>
-
-      <div className="rounded-full bg-white px-4 py-2 text-sm font-medium text-[#143D2A] shadow-sm">
-        {recipe.time} • {recipe.servings} servings
-      </div>
-    </div>
-
-    <p className="mt-4 leading-7 text-[#5F6F65]">
-      {recipe.description}
-    </p>
-
-    {/* INGREDIENTS */}
-
-    <div className="mt-6 grid gap-6 md:grid-cols-2">
-
-      <div>
-
-        <h4 className="text-lg font-semibold text-[#143D2A]">
-          Ingredients
-        </h4>
-
-        <ul className="mt-3 space-y-2">
-
-          {recipe.ingredients?.map((item, index) => (
-
-            <li
-              key={index}
-              className="flex justify-between border-b border-[#E8E2D7] py-2"
-            >
-
-              <span className="text-[#143D2A]">
-                {item.name}
-              </span>
-
-              <span className="font-semibold text-[#2E7D32]">
-                {item.quantity}
-              </span>
-
-            </li>
-
-          ))}
-
-        </ul>
-
-      </div>
-
-      {/* STEPS */}
-
-      <div>
-
-        <h4 className="text-lg font-semibold text-[#143D2A]">
-          Cooking Steps
-        </h4>
-
-        <ol className="mt-3 space-y-3">
-
-        {recipe.steps
-  .flatMap((step) =>
-    step.step
-      .split(/\.\s+|\n+/)
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => ({
-        step: line.endsWith(".") ? line : line + ".",
-      }))
-  )
-  .map((step, index) => (
-    <div
-      key={index}
-      className="flex gap-4 bg-[#F8F5EF] border border-[#E8E2D7] rounded-xl p-5"
-    >
-      <div className="w-8 h-8 rounded-full bg-[#2E7D32] text-white flex items-center justify-center font-bold shrink-0">
-        {index + 1}
-      </div>
-
-      <p className="text-[#143D2A] leading-7">
-        {step.step}
-      </p>
-    </div>
-  ))}
-
-        </ol>
-
-      </div>
-
-    </div>
-
-    {/* SWAPS */}
-
-    {recipe.swaps?.length > 0 && (
-
-      <div className="mt-8 rounded-2xl border border-[#E8E2D7] bg-white p-5">
-
-        <h4 className="font-semibold text-[#143D2A] mb-4">
-          Ingredient Swaps
-        </h4>
-
-        <ul className="space-y-3">
-
-          {recipe.swaps.map((swap, index) => (
-
-            <li
-              key={index}
-              className="flex gap-3"
-            >
-
-              <span className="text-[#C9A227]">
-                🌿
-              </span>
-
-              <span className="text-[#5F6F65]">
-
-                <strong className="text-[#143D2A]">
-                  {swap.swap}
-                </strong>
-
-                {" → "}
-
-                {swap.alternative}
-
-              </span>
-
-            </li>
-
-          ))}
-
-        </ul>
-
-      </div>
-
-    )}
-
-  </div>
-)}
+    {recipe && <RecipeCard recipe={recipe} />}
       </div>
        <div className="flex items-center justify-center mt-20">
 
