@@ -1,80 +1,64 @@
-import { Minus, Plus } from "lucide-react";
+import { X } from "lucide-react";
 
-export default function ServingControl({
-  servings,
-  increase,
-  decrease,
+export default function IngredientList({
+  ingredients,
+  removeIngredient,
 }) {
+  if (!ingredients?.length) return null;
+
   return (
-    <div className="flex items-center justify-center gap-5">
+    <div className="mt-8">
+      <h3 className="text-xl font-bold text-[#143D2A] mb-4">
+        Ingredients
+      </h3>
 
-      <button
-        onClick={decrease}
-        className="
-        w-12
-        h-12
+      <div className="flex flex-wrap gap-3">
+        {ingredients.map((item, index) => (
+          <div
+            key={index}
+            className="
+              flex
+              items-center
+              justify-between
+              gap-3
 
-        flex
-        items-center
-        justify-center
+              px-5
+              py-3
 
-        rounded-xl
+              rounded-full
 
-        bg-white
+              bg-white
 
-        border
-        border-[#D9D2C6]
+              border
+              border-[#D9D2C6]
 
-        text-[#143D2A]
+              shadow-sm
 
-        shadow-md
+              hover:border-[#C9A227]
+              transition-all
+            "
+          >
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-[#143D2A]">
+                {typeof item === "string" ? item : item.name}
+              </span>
 
-        hover:bg-[#143D2A]
-        hover:text-white
-        hover:border-[#143D2A]
+              {typeof item !== "string" && (
+                <span className="text-[#2E7D32] text-sm font-semibold">
+                  {item.quantity}
+                </span>
+              )}
+            </div>
 
-        transition-all
-        duration-300
-        "
-      >
-        <Minus size={20} />
-      </button>
-
-      <span className="text-xl font-bold text-[#143D2A]">
-        {servings} Servings
-      </span>
-
-      <button
-        onClick={increase}
-        className="
-        w-12
-        h-12
-
-        flex
-        items-center
-        justify-center
-
-        rounded-xl
-
-        bg-gradient-to-r
-        from-[#2E7D32]
-        via-[#3FA34D]
-        to-[#5BAA5B]
-
-        text-white
-
-        shadow-lg
-        shadow-green-800/20
-
-        hover:scale-105
-
-        transition-all
-        duration-300
-        "
-      >
-        <Plus size={20} />
-      </button>
-
+            <button
+              onClick={() => removeIngredient(index)}
+              className="text-red-500 hover:text-red-700 transition"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

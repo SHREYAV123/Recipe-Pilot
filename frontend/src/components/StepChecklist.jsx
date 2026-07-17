@@ -1,41 +1,32 @@
 import { useState } from "react";
 
-export default function StepChecklist({
-  steps,
-}) {
+export default function StepChecklist({ steps }) {
   const [checked, setChecked] = useState([]);
 
   const toggle = (index) => {
     if (checked.includes(index)) {
-      setChecked(
-        checked.filter((i) => i !== index)
-      );
+      setChecked(checked.filter((i) => i !== index));
     } else {
       setChecked([...checked, index]);
     }
   };
 
+  if (!steps?.length) return null;
+
   return (
     <div className="space-y-4">
-
       {steps.map((step, index) => (
-
         <label
           key={index}
           className={`
             flex
             items-start
             gap-4
-
             p-5
-
             rounded-2xl
-
             border
-
             transition-all
             duration-300
-
             cursor-pointer
 
             ${
@@ -51,12 +42,9 @@ export default function StepChecklist({
             onChange={() => toggle(index)}
             className="
               mt-1
-
               h-5
               w-5
-
               accent-[#2E7D32]
-
               cursor-pointer
             "
           />
@@ -64,7 +52,6 @@ export default function StepChecklist({
           <span
             className={`
               leading-7
-
               ${
                 checked.includes(index)
                   ? "text-[#2E7D32] line-through"
@@ -72,13 +59,10 @@ export default function StepChecklist({
               }
             `}
           >
-            {step}
+            {step.step}
           </span>
-
         </label>
-
       ))}
-
     </div>
   );
 }

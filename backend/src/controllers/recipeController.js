@@ -24,15 +24,19 @@ const createFallbackRecipe = (ingredientsText) => {
 
 export const getRecipe = async (req, res) => {
   try {
-    const { ingredients, input, text } = req.body ?? {};
-    const ingredientText =
-      typeof ingredients === "string"
-        ? ingredients
-        : typeof input === "string"
-          ? input
-          : typeof text === "string"
-            ? text
-            : "";
+   const { ingredients, input, text } = req.body ?? {};
+
+let ingredientText = "";
+
+if (Array.isArray(ingredients)) {
+  ingredientText = ingredients.join(", ");
+} else if (typeof ingredients === "string") {
+  ingredientText = ingredients;
+} else if (typeof input === "string") {
+  ingredientText = input;
+} else if (typeof text === "string") {
+  ingredientText = text;
+}
 
     const recipe = await generateRecipe(ingredientText);
 
